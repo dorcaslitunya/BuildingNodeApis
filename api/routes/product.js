@@ -76,11 +76,31 @@ router.get('/:productid',(req,res,next)=>{
 
 router.patch('/:productid',(req,res,next)=>{
     const id=req.params.productid;
+    //object of what you want to modify in your code
+    //might have no key: value pairs, we can just change the name or change the price
     const updateOperations={};
+    //operations is an array 
     for(const operations of req.body){
         updateOperations[operations.propName] = operations.value
     }
-  Product.updateOne({_id:id},{$set: {name: req.body.newName,price:req.body.newPrice}})
+    //set is a mongoose feature - json object that you pass what you want to set
+    //This assumes we want to update both name and price but we need to know which one we want to update
+    //{name: req.body.newName,price:req.body.newPrice}
+
+  Product.updateOne({_id:id},{$set:updateOperations})
+  .exec()
+  .then(result=>{
+    console.log(result)
+    res.status(200).json(result)
+
+})
+  .catch( err =>{
+
+    console.log(err);
+    res.status(500).json({
+        error:err
+    });
+  });
 
 });
 
