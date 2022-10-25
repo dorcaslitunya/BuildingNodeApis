@@ -16,7 +16,7 @@ Hence why we do app.use('/products',ProductRoutes)
 const productRoutes=require('./api/routes/product');
 const orderRoutes=require('./api/routes/order');
 
-mongoose.connect('mongodb+srv://dorcaslitunya:' + process.env.MONGO_ATLAS_PW + '@cluster0.dfyypxc.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://dorcaslit:' + process.env.MONGO_ATLAS_PW + '@node-rest-shop.rihztbt.mongodb.net/?retryWrites=true&w=majority',
 {
     useNewUrlParser: "true",
 }
