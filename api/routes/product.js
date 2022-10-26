@@ -17,10 +17,25 @@ const Product = require('../../models/product');
 
 router.get('/',(req,res,next) => {
     Product.find()
+    .select('name price _id') //fetch this fields and no other
     .exec()
     .then(docs =>{
-        console.log(docs);
-        res.status(200).json(docs)
+        const response = {
+            count: docs.length,
+            products:docs.map(doc => {
+                return{
+                    name: doc.name,
+                    price: doc.price,
+                    _id: doc._id,
+                    request: {
+                        type:'GET',
+                        url: 'http://localhost:3000/products/'+ doc._id
+
+                    }
+                }
+            })
+        }
+        res.status(200).json(response);
     })
     .catch(err=>{
         console.log(err);
@@ -42,8 +57,16 @@ router.post('/',(req,res,next)=>{
     .then(result=>{
         console.log(result)
         res.status(201).json({
-            message:"Handling POST requests to /products",
-            createdProduct:result
+            message:"Created product successfully",
+            createdProduct:{
+                name:result.name,
+                price:result.price,
+                id:result._id,
+                request:{
+                    type: 'GET',
+                    url: 'http://localhost:3000/products/'+ result._id
+                }
+            }
         });
     })
     .catch(err=>{
@@ -59,11 +82,25 @@ router.post('/',(req,res,next)=>{
 router.get('/:productid',(req,res,next)=>{
     const id=req.params.productid;
    Product.findById(id)
+   .select("name id price")
    .exec()
    .then(doc => {
     console.log("From database",doc);
     if(doc){
-    res.status(200).json({doc})
+        const response={
+            name:doc.name,
+            price:doc.price,
+            id:doc._id,
+            request:{
+                type:'GET',
+                description:"GET_ALL_PRODUCTS",
+                url:"http://localhost:3000/products/"
+
+            }
+        }
+
+    res.status(200).json({response})
+
     }else{
         res.status(404).json({message:"No valid entry for current ID"});
     }
@@ -78,6 +115,8 @@ router.patch('/:productid',(req,res,next)=>{
     const id=req.params.productid;
     //object of what you want to modify in your code
     //might have no key: value pairs, we can just change the name or change the price
+    //[    {"propName":"name","value":"Dorcas Anono modified"   }]
+    
     const updateOperations={};
     //operations is an array 
     for(const operations of req.body){
@@ -91,7 +130,14 @@ router.patch('/:productid',(req,res,next)=>{
   .exec()
   .then(result=>{
     console.log(result)
-    res.status(200).json(result)
+    const response={
+        message:"Product updated",
+        request:{
+            type:'GET',
+            url:'http://localhost:3000/products/'+ id
+        }
+    }
+    res.status(200).json(response)
 
 })
   .catch( err =>{
@@ -110,10 +156,17 @@ router.delete('/:productid',(req,res,next)=>{
 
     //removeproduct that has this id stated here
     //.exec() gets a real promise
-    Product.remove({_id:id})
+    Product.deleteOne({_id:id})
     .exec()
     .then(result=>{
-        res.status(200).json(result);
+        res.status(200).json({
+            message:"Product deleted",
+            request:{
+                type:'POST',
+                url:'http://localhost:3000/products/',
+                body:{name: 'String', price: 'Number'}
+            }
+        });
     })
     .catch(err=>{
         console.log(err);
