@@ -1,6 +1,11 @@
 const express = require ('express');
 
 const router = express.Router();
+const mongoose = require('mongoose');
+
+const Order = require ('../../models/order');
+
+
 
 
 router.get('/',(req,res,next) => {
@@ -11,15 +16,28 @@ router.get('/',(req,res,next) => {
 })
 
 router.post('/',(req,res,next) => {
-    const order = {
-        productID: req.body.productID,
-        quantity: req.body.quantity
-    }
+    const order1 =new Order({
+        _id:new mongoose.Types.ObjectId(),
+        quantity:req.body.quantity,
+        //Id of the product we are connected to
+        product:req.body.productId
+    })
 
-    res.status(201).json({
-        message:"Handling POST requests to /order",
-        order:order
-    });
+    //Since this is not a query, it runs an actuall promise thus no need
+    //to  add exec()
+    order1.save()
+    .then(result =>{
+        console.log(result);
+        res.status(201).json(result);
+    })
+    .catch(err=>{
+        console.log(err);
+        res.status(500).json({
+            error:err
+        });
+    })
+
+    
 })
 
 router.get('/:ordersid',(req,res,next)=>{

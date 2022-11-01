@@ -15,10 +15,10 @@ const orderSchema = mongoose.Schema({
     //It holds a string to the name of the model(Product) I want to connect this model (Order) to
     //Use the name assigned in the exports part of the relational model
 
-   product:{type:mongoose.Schema.Types.ObjectId, ref:'Product' },
+   product:{type:mongoose.Schema.Types.ObjectId, ref:'Product' ,required:true},
   
    //You don't need to pass me a qauntity.If you don't pass me, I will use a default of 1
-   
+
    quantity:{type:Number,default:1}
 
 
