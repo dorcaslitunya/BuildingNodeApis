@@ -13,6 +13,12 @@ const mongoose = require('mongoose');
 const product = require('../../models/product');
 
 const Product = require('../../models/product');
+const multer = require('multer');
+//initialize
+//dest - specify a foler where multer will try to store all incoming files
+//folder isnt publicly accessible..set it up in app cinfig so that its publicly acceptable
+
+const upload = multer({dest:"/uploads"});
 
 
 router.get('/',(req,res,next) => {
@@ -47,8 +53,19 @@ router.get('/',(req,res,next) => {
 });
 
 router.post('/',(req,res,next)=>{
+   ///Option 1 You can create a binary acceptable UR, this one is not binary acceptable
+   //req.body cannot parse binary data through body parser plugin that does url-encoded or json format data
+   //Try to pass out the raw request body
+   //Disav:We have to find out to which product does this information belong to 
    
-    const product1= new Product({
+   
+   //Option 2: Use form data object(JS automatically provides when you submit a form instead of request body to allow us
+   // to submit all form data(name, email and files)
+   //use multer that can parse  incoming form data
+   
+   
+   
+   const product1= new Product({
         _id: new mongoose.Types.ObjectId(),
         name:req.body.name,
         price:req.body.price

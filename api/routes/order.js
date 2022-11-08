@@ -14,15 +14,21 @@ const Product = require('../../models/product');
 
 
 router.get('/',(req,res,next) => {
+
+    //pass property name of your reference property you want to populate
  Order.find()
  .select('product quantity_id')
+ //pass property name of your reference property you want to populate
+ //second arg is a list of properties of object you want to populate
+ .populate('product',"name")
  .exec()
  .then(docs =>{
+    //console.log(docs)
     res.status(200).json({
         count:docs.length,
         orders:docs.map(doc=>{
             return{
-                _id:doc.id,
+                _id:doc._id,
                 product:doc.product,
                 quantity:doc.quantity,
                 request:{
@@ -95,7 +101,9 @@ router.post('/',(req,res,next) => {
 })
 
 router.get('/:ordersid',(req,res,next)=>{
-    Order.findById(req.params.ordersid).exec()
+    Order.findById(req.params.ordersid)
+    .populate('product')
+    .exec()
     .then(orderFound=>{
         if(!orderFound){
             return res.status(404).json({
