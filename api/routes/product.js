@@ -14,11 +14,25 @@ const product = require('../../models/product');
 
 const Product = require('../../models/product');
 const multer = require('multer');
-//initialize
-//dest - specify a foler where multer will try to store all incoming files
-//folder isnt publicly accessible..set it up in app cinfig so that its publicly acceptable
 
-const upload = multer({dest:"/uploads"});
+//initialize multer
+//dest - specify a folder where multer will try to store all incoming files
+//folder isnt publicly accessible..set it up in app config so that its publicly acceptable
+//by making it a static folder
+const upload = multer({dest:"uploads/"});
+ 
+//addres and adjust how files get stored
+const storage = multer.diskStorage({
+
+    //function that decides where the incoming file will get into
+    destination: function(req,file,cb){
+
+    },
+//defines how the file will be named
+
+    filename: function(req,file,cb){}
+
+});
 
 
 router.get('/',(req,res,next) => {
@@ -52,8 +66,13 @@ router.get('/',(req,res,next) => {
    
 });
 
-router.post('/',(req,res,next)=>{
-   ///Option 1 You can create a binary acceptable UR, this one is not binary acceptable
+//you can have multiple middleware before our main middleware(req,res,next)
+//upload.single()- processes a single file and you need to provide a field name so as to process it
+
+router.post('/',upload.single('productImage'),(req,res,next)=>{
+   ///Option 1..Build an additional endpoint where you accept binary data only
+   //https://stackoverflow.com/questions/16598973/uploading-binary-file-on-node-js
+   // You can create a binary acceptable URL, this one is not binary acceptable
    //req.body cannot parse binary data through body parser plugin that does url-encoded or json format data
    //Try to pass out the raw request body
    //Disav:We have to find out to which product does this information belong to 
@@ -61,10 +80,10 @@ router.post('/',(req,res,next)=>{
    
    //Option 2: Use form data object(JS automatically provides when you submit a form instead of request body to allow us
    // to submit all form data(name, email and files)
-   //use multer that can parse  incoming form data
+   //use multer that can parse  incoming form data(used to read forms)
    
    
-   
+   console.log(req.file);
    const product1= new Product({
         _id: new mongoose.Types.ObjectId(),
         name:req.body.name,
