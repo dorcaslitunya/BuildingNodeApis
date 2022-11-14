@@ -19,21 +19,46 @@ const multer = require('multer');
 //dest - specify a folder where multer will try to store all incoming files
 //folder isnt publicly accessible..set it up in app config so that its publicly acceptable
 //by making it a static folder
-const upload = multer({dest:"uploads/"});
+
  
 //addres and adjust how files get stored
 const storage = multer.diskStorage({
 
     //function that decides where the incoming file will get into
     destination: function(req,file,cb){
-
+        //cb(potentialError, pathToStorefile)
+        cb(null,'./uploads/')
     },
-//defines how the file will be named
 
-    filename: function(req,file,cb){}
+//defines how the file will be named
+    filename: function(req,file,cb){
+        cb(null,new Date().toISOString().replace(/:/g, '-')+file.originalname);
+    }
 
 });
 
+const fileFilter =(req,file,cb)=>{
+    //reject file i.e filter a file user wants to save
+
+    if(file.mimetype ==='image/jpeg' || file.mimetype ==='image/pmg')
+
+{cb(null ,true);
+    
+
+}else{
+    cb(null ,false);//ignores file and does not store it
+    
+}
+}
+const upload = multer({
+    storage:storage,
+    //limits size of image(accepts files upto 5MB)
+    limits:{
+    fileSize: 1024*1024*5
+},
+    fileFilter:fileFilter
+
+});
 
 router.get('/',(req,res,next) => {
     Product.find()
