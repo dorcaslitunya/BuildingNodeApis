@@ -15,6 +15,8 @@ Hence why we do app.use('/products',ProductRoutes)
 
 const productRoutes=require('./api/routes/product');
 const orderRoutes=require('./api/routes/order');
+const userRoutes=require('./api/routes/user');
+
 
 mongoose.connect('mongodb+srv://dorcaslit:' + process.env.MONGO_ATLAS_PW + '@node-rest-shop.rihztbt.mongodb.net/?retryWrites=true&w=majority',
 {
@@ -58,6 +60,7 @@ app.use((req,res,next)=>{
 //Routes that handle request
 app.use('/products',productRoutes);
 app.use('/order',orderRoutes);
+app.use('/user',userRoutes);
 
 //If you reach this line it means no route in the two files was able to handle your request
 app.use((req,res,next)=>{
