@@ -14,8 +14,15 @@ const orderSchema = mongoose.Schema({
     //ref i used to configure the ObjectId type in the product object
     //It holds a string to the name of the model(Product) I want to connect this model (Order) to
     //Use the name assigned in the exports part of the relational model
+    //Does not validate values but helps with search optimization when validating values.
+   email:{
+    type:String,
+    required:true,
+    unique:true,
+    match:/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+    
 
-   email:{type:String,required:true},
+},
    password:{type:String,required:true},
    
   
